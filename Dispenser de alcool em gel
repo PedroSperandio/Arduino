@@ -1,0 +1,62 @@
+
+
+/*
+   Autor: Pedro Victor Viana Sperandio
+   Data: 12/04/2022
+   Projeto: Dispenser automático de álcool em gel
+   Disciplina: Introdução aos Sistemas Embarcados e microcontroladores
+*/
+ 
+
+#include <Servo.h>
+// Porta Digital 6 PWM
+#define SERVO 6
+
+//Define os pinos para o trigger e echo
+#include <Ultrasonic.h>
+#define pino_trigger 4
+#define pino_echo 5
+
+//Inicializa o sensor nos pinos definidos acima
+Ultrasonic ultrasonic(pino_trigger, pino_echo);
+ 
+Servo s; // Variável Servo
+int pos; // Posição Servo
+int controle=0;
+ 
+void setup ()
+{
+  s.attach(SERVO); //Inicia o servo motor.
+  Serial.begin(9600);
+  s.write(0); // Inicia motor posição zero
+}
+ 
+void loop()
+{
+  float cmMsec;  //variavel para armazenar a distancia. 
+  long microsec = ultrasonic.timing();  //inicia o sensor ultrassonico.
+  cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);  //converte o sinal que o sensor gera em centimetros. 
+  Serial.print("Distancia em cm: "); //Printa a distancia. 
+  Serial.print(cmMsec);
+  Serial.println();
+
+  if(cmMsec <= 10 and controle==0){  //inicia o movimento do servo motor quando o usuario aproximar a mão ao minimo 10 segundos.
+    for(pos = 0; pos < 90; pos++)
+    {
+      s.write(pos);
+      delay(5);
+    }
+   delay(500);+ 
+     
+      for(pos = 90; pos >= 0; pos--)  //Retorna o servo motor para posição inicial.
+      {
+        s.write(pos);
+        delay(5);
+      }
+      controle=1;
+    }
+     if(cmMsec >=10){  //Obriga a distanciar as mãos mais do que 10 cm do sensor para acionar novamente. 
+      controle=0;
+    }
+  
+}
