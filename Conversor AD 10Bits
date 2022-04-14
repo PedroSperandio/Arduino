@@ -1,0 +1,19 @@
+/* Código para conversão do valor analogico 
+ *  para um digital de 10 Bits - (2^10)-1 = 1023;
+ */
+
+
+
+int valorLido = 0;//Ler valor do ADC
+float tensão = 0;//Valor convertido em volts (V)
+ 
+void setup() {
+Serial.begin(9600);//Configuração da taxa de transmissão
+}
+ 
+void loop() {
+valorLido = analogRead(A5);//Ler valor da tensão na entrada A5
+tensão = valorLido * (5.0/1023.0); //Converter valores em volts
+Serial.println(tensão);//Enviar tensão medida para monitor série
+delay(200);//Esperar 200ms
+}
